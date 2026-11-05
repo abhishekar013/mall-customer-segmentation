@@ -1,0 +1,50 @@
+import pandas as pd
+
+# 1. Load the Dataset
+df = pd.read_csv('Mall_Customers.csv')
+
+print("--- Original Data Info ---")
+print(df.info())
+print("\n--- First 5 Rows ---")
+display(df.head())
+
+# 2. Rename Column Headers (lowercase, no spaces)
+df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_').str.replace('(', '').str.replace(')', '')
+print("\nCleaned Columns:", df.columns.tolist())
+
+# 3. Check and Handle Missing Values
+print("\nMissing values per column:")
+print(df.isnull().sum())
+
+# Fill or drop nulls if any exist (e.g., filling numeric with median, text with 'Unknown')
+# For standard Mall Customers dataset, there are usually no nulls, but this code handles them safely:
+for col in df.select_dtypes(include=['float64', 'int64']).columns:
+    df[col] = df[col].fillna(df[col].median())
+
+for col in df.select_dtypes(include=['object']).columns:
+    df[col] = df[col].fillna('Unknown')
+
+# 4. Remove Duplicate Rows
+initial_rows = len(df)
+df = df.drop_duplicates()
+print(f"\nRemoved {initial_rows - len(df)} duplicate rows.")
+
+# 5. Standardize Text Values (e.g., Gender column)
+if 'gender' in df.columns:
+    df['gender'] = df['gender'].str.strip().str.capitalize()
+
+# 6. Check and Fix Data Types
+# Ensure customer_id is string/int, age is int, annual_income is float/int, spending_score is int
+if 'customer_id' in df.columns:
+    df['customer_id'] = df['customer_id'].astype(int)
+if 'age' in df.columns:
+    df['age'] = df['age'].astype(int)
+if 'annual_income_k$' in df.columns:
+    df['annual_income_k$'] = pd.to_numeric(df['annual_income_k$'], errors='coerce')
+
+print("\n--- Processed Data Info ---")
+print(df.dtypes)
+
+# 7. Export the Cleaned Dataset
+df.to_csv('cleaned_mall_customers.csv', index=False)
+print("\nSuccessfully saved cleaned dataset as 'cleaned_mall_customers.csv'")
