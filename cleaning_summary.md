@@ -6,3 +6,4 @@
 3. **Duplicate Removal:** Checked for and dropped duplicate rows to maintain data integrity. 
 4. **Text Standardization:** Cleaned up the `gender` column values to ensure consistent casing (`Male`, `Female`).
 5. **Data Type Validation:** Ensured numerical columns (`age`, `annual_income_k$`, `spending_score_1-100`) possess correct integer/float data types. 
+ 
